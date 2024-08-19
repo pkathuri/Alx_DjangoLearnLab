@@ -1,5 +1,5 @@
 from django.contrib import admin
 # Importing the book model
-from .models import Book
+from bookshelf.models import Book
 # Register your models here.
 admin.site.register(Book)

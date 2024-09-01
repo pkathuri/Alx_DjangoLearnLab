@@ -7,6 +7,10 @@ def librarian_view(request):
         return render(request,'librarian.html')
     return render(request,'access_denied.html')
 
+def is_librarian(user):
+    return user.userprofile.role == 'Librarian'
+
+librarian_view = user_passes_test(is_librarian)(librarian_view)
 
 
     

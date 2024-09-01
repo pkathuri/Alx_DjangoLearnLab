@@ -7,6 +7,7 @@ from django.contrib.auth import login
 from .models import Book
 from .models import Library
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
 # Create your views here.
 # Finctional view for the book model
 def list_books(request):
@@ -35,6 +36,18 @@ class LoginView(LoginView):
 # The logout view
 class LogoutView(LogoutView):
     template_name = "logout.html"
+def admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.userprofile.role == 'Admin':
+            return view_func(request, *args, **kwargs)
+        return redirect('login')  # or any other page you want to redirect to
+    return wrapper
+
+@permission_required('relationship_app.is_admin')
+@admin_required
+def admin_view(request):
+    return render(request, 'templates/relationship_app/admin_view.html')
+    
 @user_passes_test(lambda u: u.userprofile.role == 'Admin')
 def admin_view(request):
     return render(request, 'templates/relationship_app/admin_view.html')

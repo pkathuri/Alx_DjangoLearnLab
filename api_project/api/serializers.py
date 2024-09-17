@@ -1,5 +1,6 @@
 # Importing from the same directory
 from .models import Book
+from rest_framework import serializers
 import json
 
 # Defining a BookSerializer class that extends rest_framework.serializers.ModelSerializer and includes all fields of the Book model

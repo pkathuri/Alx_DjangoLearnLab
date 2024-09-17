@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # The rest framework must be included in the settings.
     "rest_framework",
     "api",
     'rest_framework.authtoken',

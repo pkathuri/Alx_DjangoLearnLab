@@ -1,13 +1,28 @@
 from django.shortcuts import render
-from rest_framework import generics,viewsets
-from .models import Book
-# Importing from the serializer 
+from rest_framework import generics, viewsets
 from .serializers import BookSerializer
+from .models import Book
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from .permissions import IsAuthenticatedUser
 
-# Create your views here.
-# creating a view named BookList that extends rest_framework.generics.ListAPIView
+class CustomObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+        })
+
 class BookList(generics.ListAPIView):
-    # A queryset containing all the data that is going to be rendered in the front-end
     queryset = Book.objects.all()
-    # Using the BookSerializer to serialize the data and the Book model as the queryset.
     serializer_class = BookSerializer
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticatedUser]
